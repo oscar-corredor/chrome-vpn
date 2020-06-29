@@ -31,32 +31,35 @@ services:
       - chrome-vpn2
       - chrome-vpn3
       - chrome-vpn4
+      - chrome-vpn5
+      - chrome-vpn6
     environment:
       FRONTEND_PORT: 3000
       BACKENDS_PORT: 3000
-      BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4"
+      BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4 chrome-vpn5 chrome-vpn6"
       HTTPCHK: "HEAD /health"
       HTTPCHKPORT: 8080
 
-  proxy-haproxy:
-    build:
-      context: haproxy
-    networks:
-      - proxynet
-    ports:
-      - "${PROXY_PORT:-3001}:3001"
-    restart: unless-stopped
-    depends_on:
-      - chrome-vpn1
-      - chrome-vpn2
-      - chrome-vpn3
-      - chrome-vpn4
-    environment:
-      FRONTEND_PORT: 3001
-      BACKENDS_PORT: 3001
-      BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4"
-      HTTPCHK: "HEAD /health"
-      HTTPCHKPORT: 8080
+  # proxy-haproxy:
+  #   build:
+  #     context: haproxy
+  #   networks:
+  #     - proxynet
+  #   ports:
+  #     - "${PROXY_PORT:-3001}:3001"
+  #     - "1936:1936"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - chrome-vpn1
+  #     - chrome-vpn2
+  #     - chrome-vpn3
+  #     - chrome-vpn4
+  #   environment:
+  #     FRONTEND_PORT: 3001
+  #     BACKENDS_PORT: 3001
+  #     BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4"
+  #     HTTPCHK: "HEAD /health"
+  #     HTTPCHKPORT: 8080
 
   chrome-vpn1: &chrome-vpn
     image: ericdraken/chrome-vpn:latest
@@ -91,6 +94,12 @@ services:
     <<: *chrome-vpn
 
   chrome-vpn4:
+    <<: *chrome-vpn
+  
+  chrome-vpn5:
+    <<: *chrome-vpn
+  
+  chrome-vpn6:
     <<: *chrome-vpn
 
   echo:
