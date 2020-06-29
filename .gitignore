@@ -4,3 +4,5 @@
 node_modules
 ovpn
 package-lock.json
+vpns.txt
+usedvpns/vpns.txt
