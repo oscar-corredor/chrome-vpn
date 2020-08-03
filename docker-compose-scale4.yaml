@@ -25,7 +25,7 @@ services:
       - proxynet
     ports:
       - "${CHROME_RDP_PORT:-3000}:3000"
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
       - chrome-vpn1
       - chrome-vpn2
@@ -40,30 +40,32 @@ services:
       HTTPCHK: "HEAD /health"
       HTTPCHKPORT: 8080
 
-  # proxy-haproxy:
-  #   build:
-  #     context: haproxy
-  #   networks:
-  #     - proxynet
-  #   ports:
-  #     - "${PROXY_PORT:-3001}:3001"
-  #     - "1936:1936"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - chrome-vpn1
-  #     - chrome-vpn2
-  #     - chrome-vpn3
-  #     - chrome-vpn4
-  #   environment:
-  #     FRONTEND_PORT: 3001
-  #     BACKENDS_PORT: 3001
-  #     BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4"
-  #     HTTPCHK: "HEAD /health"
-  #     HTTPCHKPORT: 8080
+  proxy-haproxy:
+    build:
+      context: haproxy
+    networks:
+      - proxynet
+    ports:
+      - "${PROXY_PORT:-3001}:3001"
+      - "1936:1936"
+    restart: on-failure
+    depends_on:
+      - chrome-vpn1
+      - chrome-vpn2
+      - chrome-vpn3
+      - chrome-vpn4
+      - chrome-vpn5
+      - chrome-vpn6
+    environment:
+      FRONTEND_PORT: 3001
+      BACKENDS_PORT: 3001
+      BACKENDS: "chrome-vpn1 chrome-vpn2 chrome-vpn3 chrome-vpn4 chrome-vpn5 chrome-vpn6"
+      HTTPCHK: "HEAD /health"
+      HTTPCHKPORT: 8080
 
   chrome-vpn1: &chrome-vpn
     image: ericdraken/chrome-vpn:latest
-    restart: unless-stopped
+    restart: on-failure
     cap_add:
       - NET_ADMIN # Needed for VPN tunnel adapter
     networks:
@@ -105,7 +107,7 @@ services:
   echo:
     build:
       context: echo
-    restart: unless-stopped
+    restart: on-failure
     networks:
       - proxynet
     expose:
